@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script>
+      const randomColor = () => {
+        let n = (Math.random() * 0xfffff * 1000000).toString(16);
+        return '#' + n.slice(0, 6);
+      };
+    </script>
+    <style>
+      body {
+        background: lightslategray;
+        font-family: 'Courier New', Courier, monospace;
+        text-align: center;
+      }
+
+      #container {
+        background: black;
+        display: grid;
+        margin: 20px auto;
+      }
+
+      .cell {
+        background: black;
+      }
+
+      button {
+        margin: 2px;
+        background: black;
+        border: none;
+        color: white;
+        padding: 15px;
+        font-family: 'Courier New', Courier, monospace;
+      }
+
+      button:hover {
+        background: dimgrey
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Sketchy Etcha</h1>
+    <button id="reset">Reset</button>
+    <button id="resize">Resize</button>
+    <div id="container">
+      
+    </div>
+
+    <script>
+
+      document.querySelector('#reset').addEventListener('click', resetGrid);
+      document.querySelector('#resize').addEventListener('click', resizeGrid);
+
+      let currentGridSize = 16;
+
+      function getDimensions() {
+        let answer = prompt("What size grid would you like?\nEnter a number between 1 and 50");
+
+        while (answer < 1 || answer > 50) {
+          answer = prompt("Invalid input!\nPlease enter a number between 1 and 50");
+        }
+
+        return Math.round(answer);
+      }
+
+      const containerWidth = 600;
+      const containerHeight = 600;
+
+      const container = document.querySelector('#container');
+      container.style.width = containerWidth + "px";
+      container.style.height = containerHeight + "px";
+
+      function handleHover() {
+        const cell = document.getElementById(this.id)
+        cell.style.background = randomColor();
+        if (!cell.style.opacity) cell.style.opacity = 0.1;
+        if (cell.style.opacity < 1) cell.style.opacity = parseFloat(cell.style.opacity) + 0.1;
+      }
+
+      function resetGrid() {
+        container.textContent = '';
+        drawGrid(currentGridSize);
+      }
+
+      function resizeGrid() {
+        currentGridSize = getDimensions();
+        resetGrid();
+      }
+
+      function drawGrid(gridSize) {
+        container.style.gridTemplateColumns = `repeat(${gridSize}, 1fr)`;
+        container.style.gridTemplateRows = `repeat(${gridSize}, 1fr)`;
+
+        let currentCell = 1;
+
+        for (let row = 1; row <= gridSize; row++) {
+          for (let col = 1; col <= gridSize; col++) {
+            const cell = document.createElement('div');
+            cell.classList.add('cell');
+            cell.id = `cell-${currentCell}`;
+            cell.style.gridColumn = col;
+            cell.style.gridRow = row;
+
+            container.appendChild(cell);
+
+            cell.addEventListener('mouseover', handleHover);
+
+            currentCell++;
+          }
+        }
+
+      }
+
+      drawGrid(currentGridSize);
+
+    </script>
+  </body>
+</html>
